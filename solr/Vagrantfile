@@ -8,12 +8,30 @@ Vagrant.configure("2") do |config|
 
   config.vm.network "private_network", ip: "192.168.100.2"
 
-  config.vm.disk :disk, name: "backup", size: "20GB"
 
   config.vm.provider "virtualbox" do |vb|
     vb.gui = false
     vb.name = "solr-server"
     vb.memory = "3072"
+    
+    file_to_disk = File.realpath( "." ).to_s + "/data.vdi"
+
+    if ARGV[0] == "up" && ! File.exist?(file_to_disk)
+       vb.customize [
+            'createhd',
+            '--filename', file_to_disk,
+            '--format', 'VDI',
+            '--size', 30 * 1024 # 30 GB
+            ]
+       vb.customize [
+            'storageattach', :id,
+            '--storagectl', 'IDE Controller', # The name may vary
+            '--port', 1, '--device', 0,
+            '--type', 'hdd', '--medium',
+            file_to_disk
+            ]
+    end
+
   end
 
   config.vm.provision "shell", inline: <<-SHELL
@@ -22,5 +40,7 @@ Vagrant.configure("2") do |config|
     yum install -y java-1.8.0-openjdk
   SHELL
 
-  # config.vm.provision "shell", path: "solr-install.sh"
+  config.vm.provision "shell", path: "solr-install.sh"
+  config.vm.provision "file", source: "./install_solr_service.sh", destination: "~/install_solr_service.sh"
+
 end
