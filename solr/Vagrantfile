@@ -12,6 +12,7 @@ Vagrant.configure("2") do |config|
   config.vm.provider "virtualbox" do |vb|
     vb.gui = false
     vb.name = "solr-server"
+    vb.cpus = 2
     vb.memory = "3072"
     
     file_to_disk = File.realpath( "." ).to_s + "/data.vdi"
