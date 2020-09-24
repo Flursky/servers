@@ -1,8 +1,8 @@
 Vagrant.configure("2") do |config|
 
-  config.vm.box = "archlinux/archlinux"
+  config.vm.box = "centos/7"
 
-  config.vm.hostname = "192.168.100.2"
+  config.vm.hostname = "solr-server"
 
   config.vm.box_check_update = false
 
@@ -15,8 +15,10 @@ Vagrant.configure("2") do |config|
   end
 
   config.vm.provision "shell", inline: <<-SHELL
-    pacman -Syu --noconfirm --needed
-    pacman -Syu --noconfirm -needed wget curl tar nano net-tools 
-    echo y | pacman -Syu jdk8-openjdk --noconfirm --needed
+    yum update -y --quiet
+    yum install -y wget tar nano net-tools lsof
+    yum install -y java-1.8.0-openjdk
   SHELL
+
+  # config.vm.provision "shell", path: "solr-install.sh"
 end
