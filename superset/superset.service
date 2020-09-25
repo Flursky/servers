@@ -1,0 +1,17 @@
+[Unit]
+Description = Apache Superset Webserver Daemon
+After = network.target
+
+[Service]
+PIDFile = /home/vagrant/superset/superset.pid
+User = vagrant
+Group = vagrant
+environment=PYTHONPATH=/usr/lib/bin
+Environment=SUPERSET_HOME=/home/vagrant/superset
+WorkingDirectory = /home/vagrant/superset
+ExecStart =/usr/local/bin/gunicorn --workers 4 --bind 0.0.0.0:8088 "superset.app:create_app()" --pid /home/vagrant/superset/superset.pid
+ExecStop = /bin/kill -s TERM $MAINPID
+
+
+[Install]
+WantedBy=multi-user.target

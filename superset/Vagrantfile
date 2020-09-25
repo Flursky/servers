@@ -25,4 +25,6 @@ Vagrant.configure("2") do |config|
     python-wheel openssl-devel cyrus-sasl-devel openldap-devel
   SHELL
 
+  config.vm.provision "file", source: "superset.service", destination: "~/superset.service"
+
 end
